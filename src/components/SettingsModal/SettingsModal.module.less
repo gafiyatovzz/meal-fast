@@ -1,0 +1,55 @@
+@import '../../tokens/variables';
+
+.section {
+  font-size: @font-size-xs;
+  color: @color-text-dim;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid @color-border;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.genderLabel {
+  font-size: @font-size-sm;
+  color: @color-text-muted;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.genderRow { display: flex; gap: @space-2; margin-bottom: 12px; }
+
+.genderBtn {
+  flex: 1;
+  padding: 10px 0;
+  border-radius: @radius-md;
+  border: 1px solid @color-border;
+  background: @color-surface-2;
+  color: @color-text-muted;
+  font-family: @font-family;
+  font-size: @font-size-base;
+  cursor: pointer;
+  font-weight: 600;
+  transition: @transition-fast;
+
+  &[data-active='true'] {
+    border-color: @color-accent;
+    background: @color-accent-dim;
+    color: @color-accent;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: @space-2;
+  & > * { flex: 1; }
+}

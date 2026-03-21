@@ -1,0 +1,40 @@
+@import '../../tokens/variables';
+
+.card {
+  padding: @space-7;
+  margin-bottom: @space-7;
+}
+
+.calRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 14px;
+}
+
+.calNow {
+  font-size: @font-size-hero;
+  font-weight: 900;
+  color: @color-accent;
+  line-height: 1;
+}
+
+.calMeta {
+  font-size: 13px;
+  color: @color-text-muted;
+  text-align: right;
+}
+
+.calGoal {
+  display: block;
+  font-size: 17px;
+  font-weight: 700;
+  color: @color-text;
+}
+
+.macros {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 18px;
+}

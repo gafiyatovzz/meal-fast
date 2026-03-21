@@ -1,0 +1,67 @@
+@import '../../tokens/variables';
+
+.item {
+  background: @color-surface;
+  border: 1px solid @color-border;
+  border-radius: @radius-xl;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  margin-bottom: @space-2;
+}
+
+.thumb {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: @radius-md;
+  flex-shrink: 0;
+  border: 1px solid @color-border;
+}
+
+.info { flex: 1; min-width: 0; }
+
+.name {
+  font-size: @font-size-base;
+  font-weight: 600;
+  margin-bottom: 4px;
+  padding-right: 20px;
+}
+
+.macros {
+  display: flex;
+  gap: @space-2;
+  font-size: @font-size-sm;
+}
+
+.protein { color: @color-protein; }
+.fat     { color: @color-fat; }
+.carb    { color: @color-carb; }
+
+.cal {
+  font-size: 15px;
+  font-weight: 800;
+  color: @color-accent;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.calUnit { font-size: @font-size-sm; font-weight: 400; color: @color-text-faint; }
+
+.del {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: none;
+  border: none;
+  color: @color-text-sub;
+  font-size: 13px;
+  cursor: pointer;
+  &:hover { color: @color-error-text; }
+}

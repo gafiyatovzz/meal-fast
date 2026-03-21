@@ -1,0 +1,19 @@
+@import '../../tokens/variables';
+
+.list {
+  overflow-y: auto;
+  max-height: 50vh;
+  margin-bottom: @space-4;
+}
+
+.item {
+  padding: 10px 0;
+  border-bottom: 1px solid @color-border;
+  font-size: @font-size-base;
+  color: #ccc;
+  cursor: pointer;
+  &:hover { color: @color-text; }
+  &:last-child { border-bottom: none; }
+}
+
+.close { width: 100%; margin-top: @space-4; }
