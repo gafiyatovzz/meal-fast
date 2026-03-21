@@ -13,7 +13,7 @@ export function AppHeader({ onSettings, onStats }: AppHeaderProps) {
   return (
     <header className={styles.header}>
       <div>
-        <div className={styles.logo}>ем и расту</div>
+        <div className={styles.logo}>Meal Fix</div>
         <div className={styles.date}>{dateStr}</div>
       </div>
       <div className={styles.actions}>
