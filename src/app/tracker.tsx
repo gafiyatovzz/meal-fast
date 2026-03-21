@@ -9,10 +9,13 @@ import {
   MealItem, InputBar, SettingsModal, HistoryModal,
   DateNav, StatsModal, EditMealModal,
 } from '../components'
+import type { ApiKeysState, ApiKeysSet } from '../components/SettingsModal/SettingsModal'
 import styles from './tracker.module.less'
 
-const DEFAULT_GOALS: Goals = { cal: 2800, p: 150, f: 80, c: 300 }
+const DEFAULT_GOALS: Goals  = { cal: 2800, p: 150, f: 80, c: 300 }
 const DEFAULT_ANTHRO: Anthro = { weight: '', height: '', age: '', gender: 'м' }
+const DEFAULT_KEYS_SET: ApiKeysSet  = { anthropic: false, openai: false, gemini: false }
+const DEFAULT_KEYS: ApiKeysState    = { anthropic: '', openai: '', gemini: '', provider: 'anthropic' }
 const FALLBACK_HINTS = [
   'тарелка гречки с курой', 'омлет из 3 яиц с молоком',
   'творог 200г с бананом', 'протеиновый шейк 1 мерник',
@@ -25,19 +28,21 @@ const TODAY = () => new Date().toISOString().slice(0, 10)
 
 export default function Tracker({ session }: { session: Session }) {
   const [selectedDate, setSelectedDate] = useState(TODAY())
-  const [goals, setGoals] = useState<Goals>(DEFAULT_GOALS)
+  const [goals,    setGoals]    = useState<Goals>(DEFAULT_GOALS)
   const [tmpGoals, setTmpGoals] = useState<Goals>(DEFAULT_GOALS)
-  const [anthro, setAnthro] = useState<Anthro>(DEFAULT_ANTHRO)
+  const [anthro,    setAnthro]    = useState<Anthro>(DEFAULT_ANTHRO)
   const [tmpAnthro, setTmpAnthro] = useState<Anthro>(DEFAULT_ANTHRO)
-  const [meals, setMeals] = useState<Meal[]>([])
+  const [keysSet,  setKeysSet]  = useState<ApiKeysSet>(DEFAULT_KEYS_SET)
+  const [tmpKeys,  setTmpKeys]  = useState<ApiKeysState>(DEFAULT_KEYS)
+  const [meals,   setMeals]   = useState<Meal[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [text, setText] = useState('')
-  const [photo, setPhoto] = useState<PhotoState | null>(null)
-  const [adding, setAdding] = useState(false)
-  const [modal, setModal] = useState<'goals' | 'history' | 'stats' | null>(null)
+  const [error,   setError]   = useState<string | null>(null)
+  const [text,    setText]    = useState('')
+  const [photo,   setPhoto]   = useState<PhotoState | null>(null)
+  const [adding,  setAdding]  = useState(false)
+  const [modal,   setModal]   = useState<'goals' | 'history' | 'stats' | null>(null)
   const [editingMeal, setEditingMeal] = useState<Meal | null>(null)
-  const [hints, setHints] = useState<string[]>(FALLBACK_HINTS)
+  const [hints,    setHints]    = useState<string[]>(FALLBACK_HINTS)
   const [allHints, setAllHints] = useState<string[]>([])
   const taRef = useRef<HTMLTextAreaElement>(null)
   const token = session.access_token
@@ -49,20 +54,18 @@ export default function Tracker({ session }: { session: Session }) {
 
   useEffect(() => {
     const h = { Authorization: `Bearer ${token}` }
-    fetch('/api/goals', { headers: h })
-      .then(r => r.json())
-      .then(data => {
-        if (!data) return
-        setGoals({ cal: data.cal, p: data.p, f: data.f, c: data.c })
-      })
-      .catch(() => {})
-    fetch('/api/anthro', { headers: h })
-      .then(r => r.json())
-      .then(data => {
-        if (!data) return
-        setAnthro({ weight: data.weight ?? '', height: data.height ?? '', age: data.age ?? '', gender: data.gender ?? 'м' })
-      })
-      .catch(() => {})
+    fetch('/api/goals',  { headers: h }).then(r => r.json()).then(d => {
+      if (d) setGoals({ cal: d.cal, p: d.p, f: d.f, c: d.c })
+    }).catch(() => {})
+    fetch('/api/anthro', { headers: h }).then(r => r.json()).then(d => {
+      if (d) setAnthro({ weight: d.weight ?? '', height: d.height ?? '', age: d.age ?? '', gender: d.gender ?? 'м' })
+    }).catch(() => {})
+    fetch('/api/keys',   { headers: h }).then(r => r.json()).then(d => {
+      if (d && !d.error) {
+        setKeysSet({ anthropic: d.anthropic_set, openai: d.openai_set, gemini: d.gemini_set })
+        setTmpKeys(prev => ({ ...prev, provider: d.provider ?? 'anthropic' }))
+      }
+    }).catch(() => {})
   }, [token])
 
   const fetchMeals = useCallback(async () => {
@@ -105,7 +108,7 @@ export default function Tracker({ session }: { session: Session }) {
     try {
       const cr = await fetch('/api/claude', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ text: t, imageBase64: sp?.base64 ?? null, imageType: sp?.type ?? null }),
       })
       if (!cr.ok) throw new Error(await cr.text())
@@ -141,21 +144,38 @@ export default function Tracker({ session }: { session: Session }) {
   }
 
   function openSettings() {
-    setTmpGoals({ ...goals }); setTmpAnthro({ ...anthro }); setModal('goals')
+    setTmpGoals({ ...goals })
+    setTmpAnthro({ ...anthro })
+    setTmpKeys(prev => ({ anthropic: '', openai: '', gemini: '', provider: prev.provider }))
+    setModal('goals')
   }
 
   async function saveSettings() {
     const g: Goals = { cal: +tmpGoals.cal || 2800, p: +tmpGoals.p || 150, f: +tmpGoals.f || 80, c: +tmpGoals.c || 300 }
     const a: Anthro = { ...tmpAnthro }
-    setGoals(g)
-    setAnthro(a)
-    setModal(null)
+    setGoals(g); setAnthro(a); setModal(null)
+
     const authHeader = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
     try {
       await Promise.all([
         fetch('/api/goals',  { method: 'POST', headers: authHeader, body: JSON.stringify(g) }),
         fetch('/api/anthro', { method: 'POST', headers: authHeader, body: JSON.stringify(a) }),
+        fetch('/api/keys',   {
+          method: 'POST', headers: authHeader,
+          body: JSON.stringify({
+            anthropic: tmpKeys.anthropic,
+            openai:    tmpKeys.openai,
+            gemini:    tmpKeys.gemini,
+            provider:  tmpKeys.provider,
+          }),
+        }),
       ])
+      // Refresh keys set status
+      fetch('/api/keys', { headers: { Authorization: `Bearer ${token}` } })
+        .then(r => r.json())
+        .then(d => {
+          if (d && !d.error) setKeysSet({ anthropic: d.anthropic_set, openai: d.openai_set, gemini: d.gemini_set })
+        }).catch(() => {})
     } catch (e) { setError('Ошибка сохранения: ' + (e as Error).message) }
   }
 
@@ -218,6 +238,9 @@ export default function Tracker({ session }: { session: Session }) {
         onGoalsChange={setTmpGoals}
         anthro={tmpAnthro}
         onAnthroChange={setTmpAnthro}
+        keysSet={keysSet}
+        tmpKeys={tmpKeys}
+        onKeysChange={setTmpKeys}
         onSave={saveSettings}
       />
 

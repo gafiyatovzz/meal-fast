@@ -47,9 +47,87 @@
   }
 }
 
+.providerRow {
+  display: flex;
+  flex-direction: column;
+  gap: @space-2;
+  margin-bottom: @space-4;
+}
+
+.providerBtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: @radius-md;
+  border: 1px solid @color-border;
+  background: @color-surface-2;
+  color: @color-text-muted;
+  font-family: @font-family;
+  font-size: @font-size-sm;
+  cursor: pointer;
+  text-align: left;
+  transition: @transition-fast;
+
+  &[data-active='true'] {
+    border-color: @color-accent;
+    background: @color-accent-dim;
+    color: @color-accent;
+  }
+}
+
+.providerLabel { font-weight: 500; }
+
+.keyDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: @color-accent;
+  flex-shrink: 0;
+}
+
+.keyRow {
+  margin-bottom: @space-2;
+}
+
+.keyActions {
+  margin-top: -8px;
+  margin-bottom: @space-3;
+  min-height: 16px;
+}
+
+.deleteKey {
+  font-size: @font-size-xs;
+  color: @color-error-text;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: @font-family;
+  padding: 0;
+  opacity: 0.7;
+  &:hover { opacity: 1; }
+}
+
+.undoDelete {
+  font-size: @font-size-xs;
+  color: @color-accent;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: @font-family;
+  padding: 0;
+}
+
 .actions {
   display: flex;
   gap: 10px;
   margin-top: @space-2;
   & > * { flex: 1; }
+}
+
+// .section needs top margin when not first
+.section + .section,
+.grid + .section,
+.genderRow + .section {
+  margin-top: 20px;
 }
