@@ -10,8 +10,6 @@ import {
 } from '../components'
 import styles from './tracker.module.less'
 
-const GOALS_KEY = 'nutrition_goals_v3'
-const ANTHRO_KEY = 'nutrition_anthro_v1'
 const DEFAULT_GOALS: Goals = { cal: 2800, p: 150, f: 80, c: 300 }
 const DEFAULT_ANTHRO: Anthro = { weight: '', height: '', age: '', gender: 'м' }
 const FALLBACK_HINTS = [
@@ -45,15 +43,22 @@ export default function Tracker({ session }: { session: Session }) {
   )
 
   useEffect(() => {
-    try {
-      const g = JSON.parse(localStorage.getItem(GOALS_KEY) ?? 'null')
-      if (g) setGoals({ ...DEFAULT_GOALS, ...g })
-    } catch {}
-    try {
-      const a = JSON.parse(localStorage.getItem(ANTHRO_KEY) ?? 'null')
-      if (a) setAnthro({ ...DEFAULT_ANTHRO, ...a })
-    } catch {}
-  }, [])
+    const h = { Authorization: `Bearer ${token}` }
+    fetch('/api/goals', { headers: h })
+      .then(r => r.json())
+      .then(data => {
+        if (!data) return
+        setGoals({ cal: data.cal, p: data.p, f: data.f, c: data.c })
+      })
+      .catch(() => {})
+    fetch('/api/anthro', { headers: h })
+      .then(r => r.json())
+      .then(data => {
+        if (!data) return
+        setAnthro({ weight: data.weight ?? '', height: data.height ?? '', age: data.age ?? '', gender: data.gender ?? 'м' })
+      })
+      .catch(() => {})
+  }, [token])
 
   const fetchMeals = useCallback(async () => {
     setLoading(true); setError(null)
@@ -130,12 +135,19 @@ export default function Tracker({ session }: { session: Session }) {
     setTmpGoals({ ...goals }); setTmpAnthro({ ...anthro }); setModal('goals')
   }
 
-  function saveSettings() {
+  async function saveSettings() {
     const g: Goals = { cal: +tmpGoals.cal || 2800, p: +tmpGoals.p || 150, f: +tmpGoals.f || 80, c: +tmpGoals.c || 300 }
-    setGoals(g); localStorage.setItem(GOALS_KEY, JSON.stringify(g))
     const a: Anthro = { ...tmpAnthro }
-    setAnthro(a); localStorage.setItem(ANTHRO_KEY, JSON.stringify(a))
+    setGoals(g)
+    setAnthro(a)
     setModal(null)
+    const authHeader = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
+    try {
+      await Promise.all([
+        fetch('/api/goals',  { method: 'POST', headers: authHeader, body: JSON.stringify(g) }),
+        fetch('/api/anthro', { method: 'POST', headers: authHeader, body: JSON.stringify(a) }),
+      ])
+    } catch (e) { setError('Ошибка сохранения: ' + (e as Error).message) }
   }
 
   return (
