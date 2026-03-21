@@ -1,0 +1,20 @@
+@import '../../tokens/variables';
+
+.alert {
+  background: @color-error-bg;
+  border: 1px solid @color-error-border;
+  border-radius: @radius-lg;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: @color-error-text;
+  margin-bottom: @space-6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dismiss {
+  cursor: pointer;
+  opacity: 0.6;
+  &:hover { opacity: 1; }
+}

@@ -1,0 +1,58 @@
+@import '../../tokens/variables';
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: @font-family;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: @transition-fast;
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.primary {
+  background: @color-accent;
+  color: #000;
+  border-radius: @radius-lg;
+  padding: 12px;
+  font-weight: 700;
+  font-size: @font-size-base;
+  &:not(:disabled):hover { background: @color-accent-hover; }
+}
+
+.secondary {
+  background: @color-surface-2;
+  color: @color-text-muted;
+  border: 1px solid @color-border;
+  border-radius: @radius-lg;
+  padding: 12px;
+  font-size: @font-size-base;
+}
+
+.ghost {
+  background: none;
+  border: 1px solid @color-border;
+  color: @color-text-muted;
+  border-radius: @radius-sm;
+  padding: 6px 10px;
+  font-size: @font-size-sm;
+  &:not(:disabled):hover { border-color: @color-text-muted; }
+}
+
+.icon {
+  width: 40px;
+  height: 40px;
+  border-radius: @radius-lg;
+  background: @color-surface-2;
+  border: 1px solid @color-border;
+  color: @color-text-faint;
+  flex-shrink: 0;
+  &.active {
+    background: @color-accent;
+    border-color: @color-accent;
+    color: #000;
+  }
+}

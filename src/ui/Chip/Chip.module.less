@@ -1,0 +1,21 @@
+@import '../../tokens/variables';
+
+.chip {
+  flex-shrink: 0;
+  background: @color-surface-2;
+  border: 1px solid @color-border;
+  border-radius: @radius-full;
+  padding: 6px 14px;
+  font-size: 12px;
+  color: @color-text-muted;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: @transition-fast;
+
+  &:hover { border-color: @color-text-dim; color: @color-text; }
+}
+
+.highlight {
+  color: @color-accent;
+  border-color: rgba(200, 245, 98, 0.25);
+}

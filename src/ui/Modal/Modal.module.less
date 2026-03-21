@@ -1,0 +1,29 @@
+@import '../../tokens/variables';
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .88);
+  z-index: @z-overlay;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: @space-8;
+}
+
+.modal {
+  background: @color-surface;
+  border: 1px solid @color-border;
+  border-radius: @radius-3xl;
+  padding: @space-8;
+  width: 100%;
+  max-width: 360px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.title {
+  font-size: @font-size-lg;
+  font-weight: 800;
+  margin-bottom: @space-7;
+}
