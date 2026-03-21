@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --input-type=module:*)",
+      "Bash(node -e \"require\\(''playwright''\\)\")",
+      "Bash(npm install:*)",
+      "Bash(npx playwright:*)",
+      "Bash(node /tmp/test-auth.js)",
+      "Bash(node -e \"require\\(''playwright''\\); console.log\\(''ok''\\)\")",
+      "Bash(node test-auth.js)"
+    ]
+  }
+}
