@@ -1,7 +1,19 @@
-export async function POST(req) {
+import { NextRequest } from 'next/server'
+
+type ImageSource = {
+  type: 'base64'
+  media_type: string
+  data: string
+}
+
+type ContentBlock =
+  | { type: 'image'; source: ImageSource }
+  | { type: 'text'; text: string }
+
+export async function POST(req: NextRequest) {
   const { text, imageBase64, imageType } = await req.json()
 
-  let userContent
+  let userContent: string | ContentBlock[]
   if (imageBase64) {
     userContent = [
       { type: 'image', source: { type: 'base64', media_type: imageType || 'image/jpeg', data: imageBase64 } },
@@ -15,7 +27,7 @@ export async function POST(req) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-api-key': process.env.ANTHROPIC_API_KEY,
+      'x-api-key': process.env.ANTHROPIC_API_KEY ?? '',
       'anthropic-version': '2023-06-01',
     },
     body: JSON.stringify({
@@ -34,7 +46,7 @@ cal=калории, p=белки г, f=жиры г, c=углеводы г. Вс�
   }
 
   const data = await res.json()
-  const raw = data.content.map(b => b.text || '').join('')
+  const raw: string = data.content.map((b: { text?: string }) => b.text || '').join('')
   try {
     const meal = JSON.parse(raw.replace(/```json?|```/g, '').trim())
     return Response.json(meal)

@@ -7,7 +7,11 @@
       "Bash(npx playwright:*)",
       "Bash(node /tmp/test-auth.js)",
       "Bash(node -e \"require\\(''playwright''\\); console.log\\(''ok''\\)\")",
-      "Bash(node test-auth.js)"
+      "Bash(node test-auth.js)",
+      "Bash(./node_modules/.bin/playwright test:*)",
+      "Bash(node -e \":*)",
+      "Bash(git -C /Users/gafiyatovz/Projects/nutrition-app add src/app/tracker.tsx src/app/tracker.module.less src/app/auth.module.less next.config.js package.json package-lock.json)",
+      "Bash(git -C:*)"
     ]
   }
 }

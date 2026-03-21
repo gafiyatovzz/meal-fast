@@ -1,16 +1,17 @@
 import { createClient } from '@supabase/supabase-js'
+import { NextRequest } from 'next/server'
 
-const URL = process.env.NEXT_PUBLIC_SUPABASE_URL
-const KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
+const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? ''
 
-function getSupabase(token) {
-  return createClient(URL, KEY, {
+function getSupabase(token: string) {
+  return createClient(SUPABASE_URL, SUPABASE_KEY, {
     global: { headers: { Authorization: `Bearer ${token}` } },
   })
 }
 
-async function getUser(req) {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '')
+async function getUser(req: NextRequest): Promise<{ error: string | null; token: string | null; userId: string | null }> {
+  const token = req.headers.get('authorization')?.replace('Bearer ', '') ?? null
   if (!token) return { error: 'Unauthorized', token: null, userId: null }
   const supabase = getSupabase(token)
   const { data: { user }, error } = await supabase.auth.getUser()
@@ -20,9 +21,9 @@ async function getUser(req) {
 
 const TODAY = () => new Date().toISOString().slice(0, 10)
 
-export async function GET(req) {
+export async function GET(req: NextRequest) {
   const { error, token, userId } = await getUser(req)
-  if (error) return Response.json({ error }, { status: 401 })
+  if (error || !token) return Response.json({ error }, { status: 401 })
 
   const supabase = getSupabase(token)
   const { data, error: dbErr } = await supabase
@@ -36,9 +37,9 @@ export async function GET(req) {
   return Response.json(data)
 }
 
-export async function POST(req) {
+export async function POST(req: NextRequest) {
   const { error, token, userId } = await getUser(req)
-  if (error) return Response.json({ error }, { status: 401 })
+  if (error || !token) return Response.json({ error }, { status: 401 })
 
   const supabase = getSupabase(token)
   const body = await req.json()
@@ -52,9 +53,9 @@ export async function POST(req) {
   return Response.json(data)
 }
 
-export async function DELETE(req) {
+export async function DELETE(req: NextRequest) {
   const { error, token, userId } = await getUser(req)
-  if (error) return Response.json({ error }, { status: 401 })
+  if (error || !token) return Response.json({ error }, { status: 401 })
 
   const supabase = getSupabase(token)
   const { id } = await req.json()
