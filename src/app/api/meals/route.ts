@@ -25,11 +25,12 @@ export async function GET(req: NextRequest) {
   const { error, token, userId } = await getUser(req)
   if (error || !token) return Response.json({ error }, { status: 401 })
 
+  const date = req.nextUrl.searchParams.get('date') ?? TODAY()
   const supabase = getSupabase(token)
   const { data, error: dbErr } = await supabase
     .from('meals')
     .select('*')
-    .eq('meal_date', TODAY())
+    .eq('meal_date', date)
     .eq('user_id', userId)
     .order('created_at', { ascending: false })
 

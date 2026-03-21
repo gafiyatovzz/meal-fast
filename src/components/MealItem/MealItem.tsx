@@ -1,3 +1,5 @@
+'use client'
+import { useState } from 'react'
 import type { Meal } from '../../types'
 import styles from './MealItem.module.less'
 
@@ -7,9 +9,17 @@ interface MealItemProps {
 }
 
 export function MealItem({ meal, onRemove }: MealItemProps) {
+  const [photoOpen, setPhotoOpen] = useState(false)
   return (
     <div className={styles.item}>
-      {meal.thumb && <img src={meal.thumb} className={styles.thumb} alt="" />}
+      {meal.thumb && (
+        <img
+          src={meal.thumb}
+          className={styles.thumb}
+          alt=""
+          onClick={() => setPhotoOpen(true)}
+        />
+      )}
       <div className={styles.info}>
         <div className={styles.name}>{meal.name}</div>
         <div className={styles.macros}>
@@ -22,6 +32,12 @@ export function MealItem({ meal, onRemove }: MealItemProps) {
         {Math.round(meal.cal)}<span className={styles.calUnit}> ккал</span>
       </div>
       <button className={styles.del} onClick={() => onRemove(meal.id)}>✕</button>
+
+      {photoOpen && (
+        <div className={styles.lightbox} onClick={() => setPhotoOpen(false)}>
+          <img src={meal.thumb} className={styles.lightboxImg} alt="" />
+        </div>
+      )}
     </div>
   )
 }

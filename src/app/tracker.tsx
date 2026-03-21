@@ -7,6 +7,7 @@ import { Alert, Loader } from '../ui'
 import {
   AppHeader, GoalBanner, CalorieSummary,
   MealItem, InputBar, SettingsModal, HistoryModal,
+  DateNav, StatsModal,
 } from '../components'
 import styles from './tracker.module.less'
 
@@ -20,7 +21,10 @@ const FALLBACK_HINTS = [
 
 interface PhotoState { base64: string; type: string; url: string }
 
+const TODAY = () => new Date().toISOString().slice(0, 10)
+
 export default function Tracker({ session }: { session: Session }) {
+  const [selectedDate, setSelectedDate] = useState(TODAY())
   const [goals, setGoals] = useState<Goals>(DEFAULT_GOALS)
   const [tmpGoals, setTmpGoals] = useState<Goals>(DEFAULT_GOALS)
   const [anthro, setAnthro] = useState<Anthro>(DEFAULT_ANTHRO)
@@ -31,7 +35,7 @@ export default function Tracker({ session }: { session: Session }) {
   const [text, setText] = useState('')
   const [photo, setPhoto] = useState<PhotoState | null>(null)
   const [adding, setAdding] = useState(false)
-  const [modal, setModal] = useState<'goals' | 'history' | null>(null)
+  const [modal, setModal] = useState<'goals' | 'history' | 'stats' | null>(null)
   const [hints, setHints] = useState<string[]>(FALLBACK_HINTS)
   const [allHints, setAllHints] = useState<string[]>([])
   const taRef = useRef<HTMLTextAreaElement>(null)
@@ -63,12 +67,12 @@ export default function Tracker({ session }: { session: Session }) {
   const fetchMeals = useCallback(async () => {
     setLoading(true); setError(null)
     try {
-      const r = await fetch('/api/meals', { headers: { Authorization: `Bearer ${token}` } })
+      const r = await fetch(`/api/meals?date=${selectedDate}`, { headers: { Authorization: `Bearer ${token}` } })
       if (!r.ok) throw new Error(await r.text())
       setMeals(await r.json())
     } catch (e) { setError('Ошибка загрузки: ' + (e as Error).message) }
     setLoading(false)
-  }, [token])
+  }, [token, selectedDate])
 
   useEffect(() => { fetchMeals() }, [fetchMeals])
 
@@ -150,16 +154,20 @@ export default function Tracker({ session }: { session: Session }) {
     } catch (e) { setError('Ошибка сохранения: ' + (e as Error).message) }
   }
 
+  const isToday = selectedDate === TODAY()
+
   return (
     <div className={styles.app}>
-      <AppHeader onSettings={openSettings} />
+      <AppHeader onSettings={openSettings} onStats={() => setModal('stats')} />
 
       {error && <Alert message={error} onDismiss={() => setError(null)} />}
+
+      <DateNav date={selectedDate} onChange={setSelectedDate} />
 
       <GoalBanner goals={goals} />
       <CalorieSummary totals={totals} goals={goals} />
 
-      <p className={styles.sectionTitle}>съедено сегодня</p>
+      <p className={styles.sectionTitle}>съедено{isToday ? ' сегодня' : ''}</p>
 
       {(adding || loading) && (
         <div className={styles.loadItem}>
@@ -172,8 +180,8 @@ export default function Tracker({ session }: { session: Session }) {
 
       {meals.length === 0 && !adding && !loading && (
         <div className={styles.empty}>
-          <div className={styles.emptyIcon}>🍽️</div>
-          Напиши что съел или сфоткай — я посчитаю
+          <div className={styles.emptyIcon}>{isToday ? '🍽️' : '📅'}</div>
+          {isToday ? 'Напиши что съел или сфоткай — я посчитаю' : 'В этот день ничего не записано'}
         </div>
       )}
 
@@ -181,20 +189,22 @@ export default function Tracker({ session }: { session: Session }) {
         <MealItem key={m.id} meal={m} onRemove={removeMeal} />
       ))}
 
-      <InputBar
-        text={text}
-        onChange={setText}
-        onSubmit={addMeal}
-        onPhoto={handlePhoto}
-        photo={photo}
-        onRemovePhoto={() => setPhoto(null)}
-        hints={hints}
-        allHints={allHints}
-        onHintClick={hint => { setText(hint); taRef.current?.focus() }}
-        onMoreHints={() => setModal('history')}
-        disabled={adding}
-        textareaRef={taRef}
-      />
+      {isToday && (
+        <InputBar
+          text={text}
+          onChange={setText}
+          onSubmit={addMeal}
+          onPhoto={handlePhoto}
+          photo={photo}
+          onRemovePhoto={() => setPhoto(null)}
+          hints={hints}
+          allHints={allHints}
+          onHintClick={hint => { setText(hint); taRef.current?.focus() }}
+          onMoreHints={() => setModal('history')}
+          disabled={adding}
+          textareaRef={taRef}
+        />
+      )}
 
       <SettingsModal
         open={modal === 'goals'}
@@ -211,6 +221,13 @@ export default function Tracker({ session }: { session: Session }) {
         onClose={() => setModal(null)}
         hints={allHints}
         onSelect={hint => { setText(hint); taRef.current?.focus() }}
+      />
+
+      <StatsModal
+        open={modal === 'stats'}
+        onClose={() => setModal(null)}
+        token={token}
+        goals={goals}
       />
     </div>
   )

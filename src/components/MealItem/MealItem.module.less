@@ -19,6 +19,28 @@
   border-radius: @radius-md;
   flex-shrink: 0;
   border: 1px solid @color-border;
+  cursor: pointer;
+  transition: opacity .15s;
+  &:hover { opacity: 0.85; }
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .92);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  cursor: zoom-out;
+}
+
+.lightboxImg {
+  max-width: 100%;
+  max-height: 90vh;
+  border-radius: @radius-lg;
+  object-fit: contain;
 }
 
 .info { flex: 1; min-width: 0; }

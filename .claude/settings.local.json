@@ -11,7 +11,13 @@
       "Bash(./node_modules/.bin/playwright test:*)",
       "Bash(node -e \":*)",
       "Bash(git -C /Users/gafiyatovz/Projects/nutrition-app add src/app/tracker.tsx src/app/tracker.module.less src/app/auth.module.less next.config.js package.json package-lock.json)",
-      "Bash(git -C:*)"
+      "Bash(git -C:*)",
+      "Bash(/Users/gafiyatovz/Projects/nutrition-app/supabase/migrations/002_user_goals.sql:*)",
+      "Bash(__NEW_LINE_706e6123c3c000d5__ cat:*)",
+      "Bash(/Users/gafiyatovz/Projects/nutrition-app/supabase/migrations/003_user_anthro.sql:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ]
   }
 }

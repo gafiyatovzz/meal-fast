@@ -1,0 +1,99 @@
+@import '../../tokens/variables';
+
+.periods {
+  display: flex;
+  gap: @space-2;
+  margin-bottom: @space-6;
+}
+
+.hint {
+  text-align: center;
+  color: @color-text-muted;
+  padding: @space-7;
+  font-size: @font-size-sm;
+}
+
+.avgRow {
+  display: flex;
+  gap: @space-2;
+  margin-bottom: @space-6;
+}
+
+.avgItem {
+  flex: 1;
+  background: @color-surface-2;
+  border: 1px solid @color-border;
+  border-radius: @radius-md;
+  padding: @space-2 @space-2;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.avgLabel {
+  font-size: @font-size-xs;
+  color: @color-text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.avgVal {
+  font-size: @font-size-sm;
+  font-weight: 700;
+  color: @color-text;
+}
+
+.section {
+  margin-bottom: @space-6;
+}
+
+.sectionLabel {
+  font-size: @font-size-xs;
+  color: @color-text-muted;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  margin-bottom: @space-2;
+}
+
+.chart {
+  display: block;
+  overflow: visible;
+}
+
+.xLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: @font-size-xs;
+  color: @color-text-dim;
+  margin-top: @space-1;
+}
+
+.macroRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: @space-3;
+  margin-bottom: @space-6;
+}
+
+.macroChart {}
+
+.macroLabel {
+  font-size: @font-size-xs;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  margin-bottom: @space-1;
+}
+
+.noData {
+  font-size: @font-size-xs;
+  color: @color-text-sub;
+  text-align: center;
+  padding: @space-3 0;
+}
+
+.close {
+  width: 100%;
+  margin-top: @space-2;
+}

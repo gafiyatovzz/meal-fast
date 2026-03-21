@@ -5,9 +5,10 @@ import styles from './AppHeader.module.less'
 
 interface AppHeaderProps {
   onSettings: () => void
+  onStats: () => void
 }
 
-export function AppHeader({ onSettings }: AppHeaderProps) {
+export function AppHeader({ onSettings, onStats }: AppHeaderProps) {
   const dateStr = new Date().toLocaleDateString('ru', { weekday: 'long', day: 'numeric', month: 'long' })
   return (
     <header className={styles.header}>
@@ -16,6 +17,7 @@ export function AppHeader({ onSettings }: AppHeaderProps) {
         <div className={styles.date}>{dateStr}</div>
       </div>
       <div className={styles.actions}>
+        <Button variant="ghost" onClick={onStats}>📊</Button>
         <Button variant="ghost" onClick={onSettings}>⚙ цели</Button>
         <Button variant="ghost" onClick={() => supabase.auth.signOut()}>выйти</Button>
       </div>
