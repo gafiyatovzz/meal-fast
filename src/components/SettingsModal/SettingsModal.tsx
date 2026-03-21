@@ -81,45 +81,44 @@ export function SettingsModal({
       </div>
 
       <div className={styles.section}>AI провайдер</div>
-      <div className={styles.providerRow}>
+      <div className={styles.providerTabs}>
         {PROVIDERS.map(({ id, label }) => (
           <button
             key={id}
-            className={styles.providerBtn}
+            className={styles.providerTab}
             data-active={tmpKeys.provider === id}
             onClick={() => onKeysChange({ ...tmpKeys, provider: id })}
           >
-            <span className={styles.providerLabel}>{label}</span>
-            {keysSet[id] && tmpKeys[id] !== null && (
-              <span className={styles.keyDot} />
-            )}
+            {label}
+            {keysSet[id] && tmpKeys[id] !== null && <span className={styles.keyDot} />}
           </button>
         ))}
       </div>
 
-      {PROVIDERS.map(({ id, ph }) => {
-        const isSet = keysSet[id]
-        const val = tmpKeys[id]
+      {(() => {
+        const active = PROVIDERS.find(p => p.id === tmpKeys.provider)!
+        const isSet = keysSet[active.id]
+        const val = tmpKeys[active.id]
         const deleted = val === null
         return (
-          <div key={id} className={styles.keyRow}>
+          <div className={styles.keyBlock}>
             <Input
-              label=""
+              label="API ключ"
               type="password"
               value={deleted ? '' : (val ?? '')}
-              placeholder={isSet && !deleted ? '••••••••••••' : ph}
+              placeholder={isSet && !deleted ? '••••••••••••' : active.ph}
               disabled={deleted}
-              onChange={e => onKeysChange({ ...tmpKeys, [id]: e.target.value })}
+              onChange={e => onKeysChange({ ...tmpKeys, [active.id]: e.target.value })}
             />
             <div className={styles.keyActions}>
               {deleted
-                ? <button className={styles.undoDelete} onClick={() => onKeysChange({ ...tmpKeys, [id]: '' })}>↩ отменить удаление</button>
-                : isSet && <button className={styles.deleteKey} onClick={() => onKeysChange({ ...tmpKeys, [id]: null })}>✕ удалить ключ</button>
+                ? <button className={styles.undoDelete} onClick={() => onKeysChange({ ...tmpKeys, [active.id]: '' })}>↩ отменить удаление</button>
+                : isSet && <button className={styles.deleteKey} onClick={() => onKeysChange({ ...tmpKeys, [active.id]: null })}>✕ удалить ключ</button>
               }
             </div>
           </div>
         )
-      })}
+      })()}
 
       <div className={styles.actions}>
         <Button variant="secondary" onClick={onClose}>Отмена</Button>

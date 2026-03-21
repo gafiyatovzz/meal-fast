@@ -6,9 +6,12 @@
   text-transform: uppercase;
   letter-spacing: 1.5px;
   font-weight: 600;
+  margin-top: 20px;
   margin-bottom: 12px;
   padding-bottom: 8px;
   border-bottom: 1px solid @color-border;
+
+  &:first-child { margin-top: 0; }
 }
 
 .grid {
@@ -47,53 +50,59 @@
   }
 }
 
-.providerRow {
+// ─── AI Provider tabs ──────────────────────────────────────────────────────────
+
+.providerTabs {
   display: flex;
-  flex-direction: column;
-  gap: @space-2;
-  margin-bottom: @space-4;
+  gap: @space-1;
+  background: @color-surface-2;
+  border: 1px solid @color-border;
+  border-radius: @radius-lg;
+  padding: 3px;
+  margin-bottom: @space-5;
 }
 
-.providerBtn {
+.providerTab {
+  flex: 1;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 6px;
   border-radius: @radius-md;
-  border: 1px solid @color-border;
-  background: @color-surface-2;
+  border: none;
+  background: none;
   color: @color-text-muted;
   font-family: @font-family;
-  font-size: @font-size-sm;
+  font-size: @font-size-xs;
+  font-weight: 500;
   cursor: pointer;
-  text-align: left;
   transition: @transition-fast;
+  white-space: nowrap;
 
   &[data-active='true'] {
-    border-color: @color-accent;
-    background: @color-accent-dim;
-    color: @color-accent;
+    background: @color-surface;
+    color: @color-text;
+    border: 1px solid @color-border;
   }
 }
 
-.providerLabel { font-weight: 500; }
-
 .keyDot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: @color-accent;
   flex-shrink: 0;
 }
 
-.keyRow {
-  margin-bottom: @space-2;
+.keyBlock {
+  // wrapper for active provider key input
 }
 
 .keyActions {
   margin-top: -8px;
-  margin-bottom: @space-3;
-  min-height: 16px;
+  margin-bottom: @space-4;
+  min-height: 14px;
 }
 
 .deleteKey {
@@ -123,11 +132,4 @@
   gap: 10px;
   margin-top: @space-2;
   & > * { flex: 1; }
-}
-
-// .section needs top margin when not first
-.section + .section,
-.grid + .section,
-.genderRow + .section {
-  margin-top: 20px;
 }
