@@ -54,6 +54,24 @@ export async function POST(req: NextRequest) {
   return Response.json(data)
 }
 
+export async function PATCH(req: NextRequest) {
+  const { error, token, userId } = await getUser(req)
+  if (error || !token) return Response.json({ error }, { status: 401 })
+
+  const supabase = getSupabase(token)
+  const { id, name, cal, p, f, c } = await req.json()
+  const { data, error: dbErr } = await supabase
+    .from('meals')
+    .update({ name, cal, p, f, c })
+    .eq('id', id)
+    .eq('user_id', userId)
+    .select()
+    .single()
+
+  if (dbErr) return Response.json({ error: dbErr.message }, { status: 500 })
+  return Response.json(data)
+}
+
 export async function DELETE(req: NextRequest) {
   const { error, token, userId } = await getUser(req)
   if (error || !token) return Response.json({ error }, { status: 401 })

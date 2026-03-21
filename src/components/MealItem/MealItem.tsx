@@ -6,9 +6,10 @@ import styles from './MealItem.module.less'
 interface MealItemProps {
   meal: Meal
   onRemove: (id: string) => void
+  onEdit?: () => void
 }
 
-export function MealItem({ meal, onRemove }: MealItemProps) {
+export function MealItem({ meal, onRemove, onEdit }: MealItemProps) {
   const [photoOpen, setPhotoOpen] = useState(false)
   return (
     <div className={styles.item}>
@@ -31,6 +32,9 @@ export function MealItem({ meal, onRemove }: MealItemProps) {
       <div className={styles.cal}>
         {Math.round(meal.cal)}<span className={styles.calUnit}> ккал</span>
       </div>
+      {onEdit && (
+        <button className={styles.edit} onClick={onEdit} title="Редактировать">✎</button>
+      )}
       <button className={styles.del} onClick={() => onRemove(meal.id)}>✕</button>
 
       {photoOpen && (

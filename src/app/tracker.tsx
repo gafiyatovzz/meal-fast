@@ -7,7 +7,7 @@ import { Alert, Loader } from '../ui'
 import {
   AppHeader, GoalBanner, CalorieSummary,
   MealItem, InputBar, SettingsModal, HistoryModal,
-  DateNav, StatsModal,
+  DateNav, StatsModal, EditMealModal,
 } from '../components'
 import styles from './tracker.module.less'
 
@@ -36,6 +36,7 @@ export default function Tracker({ session }: { session: Session }) {
   const [photo, setPhoto] = useState<PhotoState | null>(null)
   const [adding, setAdding] = useState(false)
   const [modal, setModal] = useState<'goals' | 'history' | 'stats' | null>(null)
+  const [editingMeal, setEditingMeal] = useState<Meal | null>(null)
   const [hints, setHints] = useState<string[]>(FALLBACK_HINTS)
   const [allHints, setAllHints] = useState<string[]>([])
   const taRef = useRef<HTMLTextAreaElement>(null)
@@ -135,6 +136,10 @@ export default function Tracker({ session }: { session: Session }) {
     } catch (e) { setError('Ошибка удаления: ' + (e as Error).message) }
   }
 
+  function mealUpdated(updated: Meal) {
+    setMeals(prev => prev.map(m => m.id === updated.id ? updated : m))
+  }
+
   function openSettings() {
     setTmpGoals({ ...goals }); setTmpAnthro({ ...anthro }); setModal('goals')
   }
@@ -186,7 +191,7 @@ export default function Tracker({ session }: { session: Session }) {
       )}
 
       {meals.map(m => (
-        <MealItem key={m.id} meal={m} onRemove={removeMeal} />
+        <MealItem key={m.id} meal={m} onRemove={removeMeal} onEdit={() => setEditingMeal(m)} />
       ))}
 
       {isToday && (
@@ -228,6 +233,13 @@ export default function Tracker({ session }: { session: Session }) {
         onClose={() => setModal(null)}
         token={token}
         goals={goals}
+      />
+
+      <EditMealModal
+        meal={editingMeal}
+        token={token}
+        onClose={() => setEditingMeal(null)}
+        onSaved={mealUpdated}
       />
     </div>
   )

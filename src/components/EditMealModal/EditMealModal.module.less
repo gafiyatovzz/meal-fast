@@ -1,0 +1,30 @@
+@import '../../tokens/variables';
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: @space-4;
+  margin-bottom: @space-6;
+}
+
+.current {
+  display: flex;
+  gap: @space-4;
+  font-size: @font-size-sm;
+  color: @color-text-muted;
+  margin-bottom: @space-6;
+  flex-wrap: wrap;
+}
+
+.error {
+  font-size: @font-size-sm;
+  color: @color-error-text;
+  margin-bottom: @space-4;
+}
+
+.actions {
+  display: flex;
+  gap: @space-3;
+
+  > * { flex: 1; }
+}
