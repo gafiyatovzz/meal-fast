@@ -3,3 +3,7 @@
 node_modules/
 .next/
 out/
+coverage/
+tsconfig.tsbuildinfo
+playwright-report/
+test-results/
