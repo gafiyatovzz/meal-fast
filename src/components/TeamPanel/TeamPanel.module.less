@@ -1,0 +1,112 @@
+@import '../../tokens/variables';
+
+.panel {
+  background: @color-surface;
+  border: 1px solid @color-border;
+  border-radius: @radius-3xl;
+  padding: @space-6;
+  margin-bottom: @space-7;
+}
+
+.title {
+  font-size: @font-size-sm;
+  font-weight: 700;
+  color: @color-text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: @space-4;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: @space-4;
+}
+
+.hint {
+  margin-top: @space-4;
+  font-size: @font-size-sm;
+  color: @color-text-faint;
+  text-align: center;
+}
+
+// ─── MemberCard ───────────────────────────────────────────────
+.card {
+  background: @color-surface-2;
+  border: 1px solid @color-border;
+  border-radius: @radius-xl;
+  padding: @space-4;
+  transition: @transition-fast;
+}
+
+.cardWinning {
+  border-color: rgba(200, 245, 98, 0.3);
+  box-shadow: 0 0 12px rgba(200, 245, 98, 0.08);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: @space-2;
+  gap: @space-1;
+}
+
+.name {
+  font-size: @font-size-base;
+  font-weight: 600;
+  color: @color-text;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.streak {
+  font-size: @font-size-xs;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.streakGrey   { color: @color-text-dim; }
+.streakOrange { color: #f97316; }
+.streakGold   { color: #f59e0b; }
+
+.noLog {
+  font-size: @font-size-xs;
+  color: @color-text-dim;
+  margin-bottom: @space-2;
+}
+
+.scoreRow {
+  display: flex;
+  align-items: baseline;
+  gap: @space-1;
+  margin-bottom: @space-2;
+}
+
+.scoreNum {
+  font-size: @font-size-xl;
+  font-weight: 900;
+  color: @color-text;
+  line-height: 1;
+}
+
+.macros {
+  display: flex;
+  gap: @space-2;
+  margin-top: @space-2;
+  flex-wrap: wrap;
+}
+
+.macro {
+  font-size: @font-size-xs;
+  font-weight: 600;
+}
+
+.macroGoal {
+  font-weight: 400;
+  color: @color-text-muted;
+}

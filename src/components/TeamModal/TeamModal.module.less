@@ -1,0 +1,139 @@
+@import '../../tokens/variables';
+
+.teamName {
+  font-size: @font-size-xl;
+  font-weight: 800;
+  color: @color-text;
+  margin-bottom: @space-6;
+}
+
+.inviteSection {
+  background: @color-surface-2;
+  border: 1px solid @color-border;
+  border-radius: @radius-lg;
+  padding: @space-5;
+  margin-bottom: @space-6;
+}
+
+.inviteLabel {
+  font-size: @font-size-xs;
+  font-weight: 700;
+  color: @color-text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: @space-2;
+}
+
+.codeRow {
+  display: flex;
+  align-items: center;
+  gap: @space-4;
+  margin-bottom: @space-2;
+}
+
+.code {
+  font-family: 'Courier New', monospace;
+  font-size: @font-size-2xl;
+  font-weight: 700;
+  color: @color-accent;
+  letter-spacing: 0.12em;
+  flex: 1;
+}
+
+.inviteHint {
+  font-size: @font-size-xs;
+  color: @color-text-dim;
+}
+
+.membersLabel {
+  font-size: @font-size-xs;
+  font-weight: 700;
+  color: @color-text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: @space-2;
+}
+
+.membersList {
+  display: flex;
+  flex-direction: column;
+  gap: @space-2;
+  margin-bottom: @space-6;
+}
+
+.memberRow {
+  background: @color-surface-2;
+  border-radius: @radius-md;
+  padding: @space-3 @space-4;
+}
+
+.memberName {
+  font-size: @font-size-base;
+  color: @color-text;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: @space-3;
+}
+
+.leaveBtn {
+  color: @color-error-text !important;
+  font-size: @font-size-sm;
+}
+
+// ─── Create/Join form ─────────────────────────────────────────────────────────
+.tabs {
+  display: flex;
+  gap: 0;
+  background: @color-surface-2;
+  border-radius: @radius-lg;
+  padding: 3px;
+  margin-bottom: @space-6;
+}
+
+.tab {
+  flex: 1;
+  padding: @space-2 @space-4;
+  border: none;
+  background: transparent;
+  color: @color-text-muted;
+  font-size: @font-size-base;
+  font-weight: 600;
+  border-radius: @radius-md;
+  cursor: pointer;
+  transition: @transition-fast;
+
+  &:hover {
+    color: @color-text;
+  }
+}
+
+.tabActive {
+  background: @color-surface;
+  color: @color-text;
+  border: 1px solid @color-border;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: @space-3;
+}
+
+.label {
+  font-size: @font-size-sm;
+  font-weight: 600;
+  color: @color-text-faint;
+  margin-bottom: -@space-1;
+}
+
+.error {
+  font-size: @font-size-sm;
+  color: @color-error-text;
+  background: @color-error-bg;
+  border: 1px solid @color-error-border;
+  border-radius: @radius-md;
+  padding: @space-3 @space-4;
+}

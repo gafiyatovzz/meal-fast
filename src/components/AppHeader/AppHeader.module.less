@@ -3,8 +3,14 @@
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   margin-bottom: @space-8;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: @space-3;
 }
 
 .logo {
@@ -12,14 +18,16 @@
   font-weight: 700;
   color: @color-accent;
   letter-spacing: -0.5px;
-  margin-bottom: 2px;
 }
 
-.date {
-  font-size: @font-size-sm;
-  color: @color-text-muted;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+.streak {
+  font-size: @font-size-base;
+  font-weight: 600;
+  color: #ff8c00;
+  background: rgba(255, 140, 0, 0.12);
+  border-radius: @radius-full;
+  padding: 2px 10px;
+  letter-spacing: 0;
 }
 
 .actions {

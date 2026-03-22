@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { Modal, Button } from '../../ui'
 import type { Goals } from '../../types'
+import { today, formatDateShort } from '../../lib/date'
 import styles from './StatsModal.module.less'
 
 interface DayStat { date: string; cal: number; p: number; f: number; c: number }
@@ -15,9 +16,6 @@ interface StatsModalProps {
 
 const PERIODS: Array<7 | 14 | 30> = [7, 14, 30]
 
-function formatShort(dateStr: string): string {
-  return new Date(dateStr + 'T12:00:00').toLocaleDateString('ru', { day: 'numeric', month: 'numeric' })
-}
 
 function LineChart({ data, color, goal, height = 80 }: {
   data: number[]; color: string; goal?: number; height?: number
@@ -69,7 +67,7 @@ export function StatsModal({ open, onClose, token, goals }: StatsModalProps) {
   useEffect(() => {
     if (!open) return
     setLoading(true)
-    fetch(`/api/stats?days=${period}`, { headers: { Authorization: `Bearer ${token}` } })
+    fetch(`/api/stats?days=${period}&today=${today()}`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.json())
       .then(data => setStats(Array.isArray(data) ? data : []))
       .catch(() => {})
@@ -87,8 +85,8 @@ export function StatsModal({ open, onClose, token, goals }: StatsModalProps) {
   const showAllLabels = period <= 7
   const n = stats.length
   const xLabels = showAllLabels
-    ? stats.map(d => formatShort(d.date))
-    : [formatShort(stats[0]?.date ?? ''), formatShort(stats[Math.floor(n / 2)]?.date ?? ''), formatShort(stats[n - 1]?.date ?? '')]
+    ? stats.map(d => formatDateShort(d.date))
+    : [formatDateShort(stats[0]?.date ?? ''), formatDateShort(stats[Math.floor(n / 2)]?.date ?? ''), formatDateShort(stats[n - 1]?.date ?? '')]
 
   return (
     <Modal open={open} onClose={onClose} title="Динамика">

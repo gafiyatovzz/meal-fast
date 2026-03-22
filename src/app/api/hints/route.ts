@@ -32,6 +32,7 @@ export async function GET(req: NextRequest) {
   if (authErr || !user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { searchParams } = new URL(req.url)
+  const tzOffset = parseInt(searchParams.get('tz') ?? '0', 10) // minutes west of UTC (JS convention)
   const hour = parseInt(searchParams.get('hour') ?? String(new Date().getHours()), 10)
   const { period, min, max } = getPeriodRange(hour)
 
@@ -46,7 +47,7 @@ export async function GET(req: NextRequest) {
   const allCount: Record<string, number> = {}
 
   for (const meal of data) {
-    const mealHour = new Date(meal.created_at).getHours()
+    const mealHour = new Date(new Date(meal.created_at).getTime() - tzOffset * 60000).getUTCHours()
     const name: string = meal.name
 
     allCount[name] = (allCount[name] || 0) + 1

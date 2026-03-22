@@ -1,0 +1,137 @@
+@import '../../tokens/variables';
+
+.scannerWrap {
+  display: flex;
+  flex-direction: column;
+  gap: @space-5;
+}
+
+.viewfinderBox {
+  position: relative;
+  width: 100%;
+  border-radius: @radius-lg;
+  overflow: hidden;
+  background: #000;
+  aspect-ratio: 3 / 4;
+}
+
+.viewfinder {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.scanLine {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: @color-accent;
+  box-shadow: 0 0 8px @color-accent;
+  border-radius: 1px;
+  animation: scanPulse 2s ease-in-out infinite;
+}
+
+@keyframes scanPulse {
+  0%, 100% { top: 15%; }
+  50%       { top: 80%; }
+}
+
+.loadingOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loadingText {
+  color: @color-accent;
+  font-size: @font-size-base;
+  font-weight: 600;
+}
+
+.hint {
+  font-size: @font-size-sm;
+  color: @color-text-muted;
+  text-align: center;
+  margin: 0;
+}
+
+// ── Confirm phase ─────────────────────────────────────────────
+
+.confirmWrap {
+  display: flex;
+  flex-direction: column;
+  gap: @space-5;
+}
+
+.productName {
+  font-size: @font-size-md;
+  font-weight: 700;
+  color: @color-text;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.per100 {
+  display: flex;
+  gap: @space-4;
+  flex-wrap: wrap;
+  font-size: @font-size-sm;
+  color: @color-text-muted;
+}
+
+.gramsRow {
+  // let Input take full width
+}
+
+.preview {
+  display: flex;
+  gap: @space-4;
+  flex-wrap: wrap;
+  font-size: @font-size-sm;
+  font-weight: 600;
+  color: @color-text;
+  background: @color-surface-2;
+  border-radius: @radius-md;
+  padding: @space-3 @space-4;
+}
+
+.protein { color: @color-protein; }
+.fat     { color: @color-fat; }
+.carb    { color: @color-carb; }
+
+// ── Error phase ───────────────────────────────────────────────
+
+.errorWrap {
+  display: flex;
+  flex-direction: column;
+  gap: @space-6;
+}
+
+.errorMsg {
+  font-size: @font-size-sm;
+  color: @color-error-text;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.errorDetail {
+  font-size: @font-size-xs;
+  color: @color-text-muted;
+  font-family: monospace;
+  margin: 0;
+  word-break: break-all;
+}
+
+// ── Shared ────────────────────────────────────────────────────
+
+.actions {
+  display: flex;
+  gap: @space-3;
+
+  > * { flex: 1; }
+}

@@ -19,7 +19,7 @@ async function getUser(req: NextRequest): Promise<{ error: string | null; token:
   return { error: null, token, userId: user.id }
 }
 
-const TODAY = () => new Date().toISOString().slice(0, 10)
+const TODAY = () => new Date().toLocaleDateString('en-CA')
 
 export async function GET(req: NextRequest) {
   const { error, token, userId } = await getUser(req)
@@ -44,9 +44,13 @@ export async function POST(req: NextRequest) {
 
   const supabase = getSupabase(token)
   const body = await req.json()
+  const meal_date = typeof body.meal_date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(body.meal_date)
+    ? body.meal_date
+    : TODAY()
+  const { meal_date: _md, ...rest } = body
   const { data, error: dbErr } = await supabase
     .from('meals')
-    .insert({ ...body, meal_date: TODAY(), user_id: userId })
+    .insert({ ...rest, meal_date, user_id: userId })
     .select()
     .single()
 

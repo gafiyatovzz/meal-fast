@@ -24,7 +24,11 @@ export async function GET(req: NextRequest) {
   if (error || !token) return Response.json({ error }, { status: 401 })
 
   const days = Math.min(parseInt(req.nextUrl.searchParams.get('days') ?? '30'), 90)
-  const from = new Date()
+  const todayParam = req.nextUrl.searchParams.get('today')
+  const todayDate = todayParam && /^\d{4}-\d{2}-\d{2}$/.test(todayParam)
+    ? new Date(todayParam + 'T12:00:00')
+    : new Date()
+  const from = new Date(todayDate)
   from.setDate(from.getDate() - days + 1)
   const fromDate = from.toISOString().slice(0, 10)
 
@@ -54,7 +58,7 @@ export async function GET(req: NextRequest) {
   // Fill all dates in range (including days with no meals as zeros)
   const result = []
   for (let i = days - 1; i >= 0; i--) {
-    const d = new Date()
+    const d = new Date(todayDate)
     d.setDate(d.getDate() - i)
     const date = d.toISOString().slice(0, 10)
     result.push({ date, ...(map.get(date) ?? { cal: 0, p: 0, f: 0, c: 0 }) })
