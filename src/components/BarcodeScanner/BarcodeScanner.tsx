@@ -55,7 +55,7 @@ export function BarcodeScanner({ open, token: _token, onClose, onConfirm }: Barc
 
         const codeReader = new BrowserMultiFormatReader()
         controls = await codeReader.decodeFromVideoDevice(
-          null,
+          undefined,
           videoRef.current!,
           async (result: { getText(): string } | null | undefined, err: unknown) => {
             if (!result || cancelled) {
