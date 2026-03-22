@@ -73,9 +73,12 @@ export default function Tracker({ session }: { session: Session }) {
         setTmpKeys(prev => ({ ...prev, provider: d.provider ?? 'anthropic' }))
       }
     }).catch(() => {})
-    fetch('/api/team', { headers: h }).then(r => r.json()).then(d => {
-      setTeam(d ?? null)
-    }).catch(() => {})
+    fetch('/api/team', { headers: h }).then(async r => {
+      if (!r.ok) { setTeam(null); return }
+      const d = await r.json()
+      if (!d || d.error || typeof d.id !== 'string') { setTeam(null); return }
+      setTeam(d as TeamData)
+    }).catch(() => { setTeam(null) })
     fetch(`/api/streak?today=${TODAY()}`, { headers: h }).then(r => r.json()).then(d => {
       if (d && typeof d.streak === 'number') setStreak(d.streak)
     }).catch(() => {})

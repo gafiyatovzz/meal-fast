@@ -93,6 +93,7 @@ export function TeamModal({ open, onClose, token, team, onTeamChange }: TeamModa
 
   // ── Manage view (уже в команде) ─────────────────────────────────────────
   if (team) {
+    const members = Array.isArray(team.members) ? team.members : []
     return (
       <Modal open={open} onClose={handleClose} title="🏆 Команда">
         <div className={styles.teamName}>{team.name}</div>
@@ -110,7 +111,7 @@ export function TeamModal({ open, onClose, token, team, onTeamChange }: TeamModa
 
         <div className={styles.membersLabel}>Участники</div>
         <div className={styles.membersList}>
-          {team.members.map(m => (
+          {members.map(m => (
             <div key={m.user_id} className={styles.memberRow}>
               <span className={styles.memberName}>{m.display_name}</span>
             </div>
