@@ -3,6 +3,7 @@ import { NextRequest } from 'next/server'
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? ''
+const SERVICE_KEY  = process.env.SUPABASE_SERVICE_ROLE_KEY ?? SUPABASE_KEY
 
 function getSupabase(token: string) {
   return createClient(SUPABASE_URL, SUPABASE_KEY, {
@@ -32,14 +33,17 @@ export async function POST(req: NextRequest) {
   if (!displayName) return Response.json({ error: 'display_name обязателен' }, { status: 400 })
 
   const supabase = getSupabase(token)
+  const adminSupabase = createClient(SUPABASE_URL, SERVICE_KEY)
 
   // Проверяем, что пользователь ещё не в команде
-  const { data: existing } = await supabase
+  const { data: existing, error: existingErr } = await supabase
     .from('team_members')
     .select('team_id')
     .eq('user_id', userId)
+    .limit(1)
     .maybeSingle()
 
+  if (existingErr) return Response.json({ error: existingErr.message }, { status: 500 })
   if (existing) return Response.json({ error: 'Вы уже состоите в команде' }, { status: 400 })
 
   // Ищем команду по коду (RLS policy "read team by invite code" разрешает)
@@ -52,11 +56,6 @@ export async function POST(req: NextRequest) {
   if (findErr || !team) return Response.json({ error: 'Команда не найдена' }, { status: 404 })
 
   // Проверяем количество участников (не более 10, разумный лимит)
-  const { data: membersCheck } = await supabase
-    .from('team_members')
-    .select('user_id', { count: 'exact', head: true })
-    .eq('team_id', team.id)
-
   // Добавляем участника
   const { error: insertErr } = await supabase
     .from('team_members')
@@ -65,7 +64,7 @@ export async function POST(req: NextRequest) {
   if (insertErr) return Response.json({ error: insertErr.message }, { status: 500 })
 
   // Возвращаем полную информацию о команде
-  const { data: members } = await supabase
+  const { data: members } = await adminSupabase
     .from('team_members')
     .select('user_id, display_name, joined_at')
     .eq('team_id', team.id)

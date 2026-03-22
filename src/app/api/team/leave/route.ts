@@ -27,12 +27,14 @@ export async function DELETE(req: NextRequest) {
 
   const supabase = getSupabase(token)
 
-  const { data: membership } = await supabase
+  const { data: membership, error: membershipErr } = await supabase
     .from('team_members')
     .select('team_id')
     .eq('user_id', userId)
+    .limit(1)
     .maybeSingle()
 
+  if (membershipErr) return Response.json({ error: membershipErr.message }, { status: 500 })
   if (!membership) return Response.json({ error: 'Вы не состоите в команде' }, { status: 400 })
 
   const teamId = membership.team_id

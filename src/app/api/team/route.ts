@@ -3,6 +3,7 @@ import { NextRequest } from 'next/server'
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? ''
+const SERVICE_KEY  = process.env.SUPABASE_SERVICE_ROLE_KEY ?? SUPABASE_KEY
 
 function getSupabase(token: string) {
   return createClient(SUPABASE_URL, SUPABASE_KEY, {
@@ -25,24 +26,27 @@ export async function GET(req: NextRequest) {
   if (error || !token) return Response.json({ error }, { status: 401 })
 
   const supabase = getSupabase(token)
+  const adminSupabase = createClient(SUPABASE_URL, SERVICE_KEY)
 
-  const { data: membership } = await supabase
+  const { data: membership, error: membershipErr } = await supabase
     .from('team_members')
     .select('team_id, display_name')
     .eq('user_id', userId)
+    .limit(1)
     .maybeSingle()
 
+  if (membershipErr) return Response.json({ error: membershipErr.message }, { status: 500 })
   if (!membership) return Response.json(null)
 
   const { data: team, error: teamErr } = await supabase
     .from('teams')
-    .select('id, name, invite_code, created_at')
+    .select('id, name, invite_code, created_at, created_by')
     .eq('id', membership.team_id)
     .single()
 
   if (teamErr || !team) return Response.json(null)
 
-  const { data: members } = await supabase
+  const { data: members } = await adminSupabase
     .from('team_members')
     .select('user_id, display_name, joined_at')
     .eq('team_id', team.id)
@@ -63,20 +67,22 @@ export async function POST(req: NextRequest) {
   const supabase = getSupabase(token)
 
   // Проверяем, что пользователь ещё не в команде
-  const { data: existing } = await supabase
+  const { data: existing, error: existingErr } = await supabase
     .from('team_members')
     .select('team_id')
     .eq('user_id', userId)
+    .limit(1)
     .maybeSingle()
 
+  if (existingErr) return Response.json({ error: existingErr.message }, { status: 500 })
   if (existing) return Response.json({ error: 'Вы уже состоите в команде' }, { status: 400 })
 
   // Создаём команду (используем anon key — RLS policy "anyone can create team")
-  const adminSupabase = createClient(SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY ?? SUPABASE_KEY)
+  const adminSupabase = createClient(SUPABASE_URL, SERVICE_KEY)
   const { data: team, error: createErr } = await adminSupabase
     .from('teams')
-    .insert({ name })
-    .select()
+    .insert({ name, created_by: userId })
+    .select('id, name, invite_code, created_at, created_by')
     .single()
 
   if (createErr || !team) return Response.json({ error: createErr?.message ?? 'Ошибка создания' }, { status: 500 })
@@ -92,5 +98,14 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: memberErr.message }, { status: 500 })
   }
 
-  return Response.json({ ...team, members: [{ user_id: userId, display_name: displayName, joined_at: new Date().toISOString() }] })
+  const { data: members, error: membersErr } = await adminSupabase
+    .from('team_members')
+    .select('user_id, display_name, joined_at')
+    .eq('team_id', team.id)
+
+  if (membersErr) {
+    return Response.json({ ...team, members: [{ user_id: userId, display_name: displayName, joined_at: new Date().toISOString() }] })
+  }
+
+  return Response.json({ ...team, members: members ?? [] })
 }

@@ -59,26 +59,27 @@ export async function GET(req: NextRequest) {
     : new Date().toISOString().slice(0, 10)
 
   const supabase = getSupabase(token)
+  // Используем service role для чтения данных участников.
+  const admin = createClient(SUPABASE_URL, SERVICE_KEY)
 
   // Находим команду пользователя
-  const { data: membership } = await supabase
+  const { data: membership, error: membershipErr } = await supabase
     .from('team_members')
     .select('team_id')
     .eq('user_id', userId)
+    .limit(1)
     .maybeSingle()
 
+  if (membershipErr) return Response.json({ error: membershipErr.message }, { status: 500 })
   if (!membership) return Response.json({ error: 'Не в команде' }, { status: 400 })
 
-  // Список участников команды (через user token — RLS разрешает видеть свою команду)
-  const { data: members } = await supabase
+  // Список участников команды читаем через service role, чтобы не зависеть от RLS team_members select.
+  const { data: members } = await admin
     .from('team_members')
     .select('user_id, display_name')
     .eq('team_id', membership.team_id)
 
   if (!members?.length) return Response.json([])
-
-  // Используем service role для чтения данных других участников
-  const admin = createClient(SUPABASE_URL, SERVICE_KEY)
 
   const memberIds = members.map(m => m.user_id)
 
